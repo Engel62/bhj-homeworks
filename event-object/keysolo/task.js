@@ -4,6 +4,7 @@ class Game {
     this.wordElement = container.querySelector('.word');
     this.winsElement = container.querySelector('.status__wins');
     this.lossElement = container.querySelector('.status__loss');
+    this.timer = container.querySelector('.timer');
 
     this.reset();
 
@@ -17,23 +18,24 @@ class Game {
   }
 
   registerEvents() {
-    /*
-      TODO:
-      Написать обработчик события, который откликается
-      на каждый введённый символ.
-      В случае правильного ввода слова вызываем this.success()
-      При неправильном вводе символа - this.fail();
-      DOM-элемент текущего символа находится в свойстве this.currentSymbol.
-     */
+    document.addEventListener('keypress', event => {
+      if (this.currentSymbol.textContent.toLowerCase() === event.key.toLowerCase())
+        this.success();
+      else
+        this.fail();
+    })
+  }
+
+  countTimer = () => {
+    this.timer.textContent--;
+    if (this.timer.textContent == 0)
+      this.fail();
   }
 
   success() {
-    if(this.currentSymbol.classList.contains("symbol_current")) this.currentSymbol.classList.remove("symbol_current");
     this.currentSymbol.classList.add('symbol_correct');
     this.currentSymbol = this.currentSymbol.nextElementSibling;
-
     if (this.currentSymbol !== null) {
-      this.currentSymbol.classList.add('symbol_current');
       return;
     }
 
@@ -56,34 +58,41 @@ class Game {
     const word = this.getWord();
 
     this.renderWord(word);
+
+    this.timer.textContent = word.length;
+    if (this.timerID)
+      clearInterval(this.timerID);
+    this.timerID = setInterval(this.countTimer, 1000);
   }
 
   getWord() {
     const words = [
-        'bob',
-        'awesome',
-        'netology',
-        'hello',
-        'kitty',
-        'rock',
-        'youtube',
-        'popcorn',
-        'cinema',
-        'love',
-        'javascript'
-      ],
-      index = Math.floor(Math.random() * words.length);
+          'bob',
+          'awesome',
+          'netology',
+          'hello',
+          'kitty',
+          'rock',
+          'youtube',
+          'popcorn',
+          'cinema',
+          'love',
+          'javascript',
+          'я люблю kitkat',
+          'КрокодиLL'
+        ],
+        index = Math.floor(Math.random() * words.length);
 
     return words[index];
   }
 
   renderWord(word) {
     const html = [...word]
-      .map(
-        (s, i) =>
-          `<span class="symbol ${i === 0 ? 'symbol_current': ''}">${s}</span>`
-      )
-      .join('');
+        .map(
+            (s, i) =>
+                `<span class="symbol ${i === 0 ? 'symbol_current': ''}">${s}</span>`
+        )
+        .join('');
     this.wordElement.innerHTML = html;
 
     this.currentSymbol = this.wordElement.querySelector('.symbol_current');
@@ -91,4 +100,5 @@ class Game {
 }
 
 new Game(document.getElementById('game'))
+
 
