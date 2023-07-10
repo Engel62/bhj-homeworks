@@ -4,10 +4,8 @@ class Game {
     this.wordElement = container.querySelector('.word');
     this.winsElement = container.querySelector('.status__wins');
     this.lossElement = container.querySelector('.status__loss');
-    this.timer = container.querySelector('.timer');
 
     this.reset();
-
     this.registerEvents();
   }
 
@@ -18,18 +16,13 @@ class Game {
   }
 
   registerEvents() {
-    document.addEventListener('keypress', event => {
-      if (this.currentSymbol.textContent.toLowerCase() === event.key.toLowerCase())
+    document.addEventListener("keydown", (pushKey) => {
+      if (pushKey.key.toLowerCase() == this.currentSymbol.textContent.toLowerCase()) {
         this.success();
-      else
+      } else {
         this.fail();
+      }
     })
-  }
-
-  countTimer = () => {
-    this.timer.textContent--;
-    if (this.timer.textContent == 0)
-      this.fail();
   }
 
   success() {
@@ -47,7 +40,7 @@ class Game {
   }
 
   fail() {
-    if (++this.lossElement.textContent === 5) {
+    if (++this.lossElement.textContent === 3) {
       alert('Вы проиграли!');
       this.reset();
     }
@@ -56,13 +49,7 @@ class Game {
 
   setNewWord() {
     const word = this.getWord();
-
     this.renderWord(word);
-
-    this.timer.textContent = word.length;
-    if (this.timerID)
-      clearInterval(this.timerID);
-    this.timerID = setInterval(this.countTimer, 1000);
   }
 
   getWord() {
@@ -77,9 +64,7 @@ class Game {
           'popcorn',
           'cinema',
           'love',
-          'javascript',
-          'я люблю kitkat',
-          'КрокодиLL'
+          'javascript'
         ],
         index = Math.floor(Math.random() * words.length);
 
@@ -100,5 +85,3 @@ class Game {
 }
 
 new Game(document.getElementById('game'))
-
-
